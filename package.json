@@ -4,6 +4,7 @@
     "name": "Rick Waldron <waldron.rick@gmail.com>",
     "email": "waldron.rick@gmail.com"
   },
+  "license": "MIT",
   "version": "0.1.0",
   "description": "High resolution process tick (maybe)",
    "repository": {
