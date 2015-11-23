@@ -3,10 +3,10 @@
 
 using namespace v8;
 
-class TemporalTickWorker : public NanAsyncWorker {
+class TemporalTickWorker : public Nan::AsyncWorker {
   public:
-    TemporalTickWorker(NanCallback *callback, int usec)
-      : NanAsyncWorker(callback), usec(usec) {}
+    TemporalTickWorker(Nan::Callback *callback, int usec)
+      : Nan::AsyncWorker(callback), usec(usec) {}
     ~TemporalTickWorker() {}
 
     // Blocking, executed inside the worker-thread.
@@ -19,11 +19,11 @@ class TemporalTickWorker : public NanAsyncWorker {
 
     // Async work is complete
     void HandleOKCallback() {
-      NanScope();
+      Nan::HandleScope scope;
 
       Local<Value> argv[] = {
-        NanNull(),
-        NanNew<Number>(usec)
+        Nan::Null(),
+        Nan::New<Number>(usec)
       };
 
       callback->Call(2, argv);
@@ -34,47 +34,47 @@ class TemporalTickWorker : public NanAsyncWorker {
 };
 
 struct TemporalTickType {
-  NanCallback *callback;
+  Nan::Callback *callback;
   int usec;
 };
 
 NAN_METHOD(TemporalTick) {
-  NanScope();
+  Nan::HandleScope scope;
 
   TemporalTickType *tick = new TemporalTickType();
 
-  if (args.Length() == 1) {
-    if (!args[0]->IsFunction()) {
-      NanThrowTypeError("Expected function");
-      NanReturnUndefined();
+  if (info.Length() == 1) {
+    if (!info[0]->IsFunction()) {
+      Nan::ThrowTypeError("Expected function");
+      return;
     }
 
     tick->usec = 0;
-    tick->callback = new NanCallback(args[0].As<Function>());
+    tick->callback = new Nan::Callback(info[0].As<Function>());
   }
 
-  if (args.Length() == 2) {
-    if (!args[0]->IsNumber()) {
-      NanThrowTypeError("Expected number");
-      NanReturnUndefined();
+  if (info.Length() == 2) {
+    if (!info[0]->IsNumber()) {
+      Nan::ThrowTypeError("Expected number");
+      return;
     }
 
-    if (!args[1]->IsFunction()) {
-      NanThrowTypeError("Expected function");
-      NanReturnUndefined();
+    if (!info[1]->IsFunction()) {
+      Nan::ThrowTypeError("Expected function");
+      return;
     }
 
-    tick->usec = args[0]->NumberValue();
-    tick->callback = new NanCallback(args[1].As<Function>());
+    tick->usec = info[0]->NumberValue();
+    tick->callback = new Nan::Callback(info[1].As<Function>());
   }
 
-  NanAsyncQueueWorker(new TemporalTickWorker(tick->callback, tick->usec));
-  NanReturnUndefined();
+  Nan::AsyncQueueWorker(new TemporalTickWorker(tick->callback, tick->usec));
+  return;
 }
 
 void Init(Handle<Object> exports) {
-  NODE_SET_METHOD(exports, "tick", TemporalTick);
-  NODE_SET_METHOD(exports, "usleep", TemporalTick);
+  Nan::SetMethod(exports, "tick", TemporalTick);
+  Nan::SetMethod(exports, "usleep", TemporalTick);
 }
 
-NODE_MODULE(temporal_tick, Init)
+NODE_MODULE(temporal_tick, Init);
