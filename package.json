@@ -1,7 +1,7 @@
 {
   "name": "temporal-tick",
   "author": {
-    "name": "Rick Waldron <waldron.rick@gmail.com>",
+    "name": "Rick Waldron",
     "email": "waldron.rick@gmail.com"
   },
   "license": "MIT",
@@ -9,10 +9,10 @@
   "description": "High resolution process tick (maybe)",
   "repository": {
     "type": "git",
-    "url": "git://github.com/rwaldron/johnny-five.git"
+    "url": "git://github.com/rwaldron/temporal-tick.git"
   },
   "bugs": {
-    "url": "https://github.com/rwaldron/johnny-five/issues"
+    "url": "https://github.com/rwaldron/temporal-tick/issues"
   },
   "dependencies": {
     "bindings": "1.2.1",
